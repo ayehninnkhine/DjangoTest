@@ -1,0 +1,11 @@
+<form method="post">
+    {% csrf_token %}
+    <label>Name: </label>
+    <input name="username" value="{{user.username}}">
+    <br>
+    <label>Password: </label>
+    <input name="password" value="{{user.password}}">
+    <br>
+    <input type="hidden" name="id" value="{user.id}}">
+    <input type="submit" value="Submit">
+</form>
