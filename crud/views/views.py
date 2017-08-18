@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -9,6 +10,20 @@ class PersonForm(ModelForm):
     class Meta:
         model = User
         fields = ['id', 'username', 'password']
+
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+        name = cleaned_data.get('username')
+
+        matching_courses = User.objects.filter(username=name)
+        if self.instance:
+            matching_courses = matching_courses.exclude(pk=self.instance.pk)
+        if matching_courses.exists():
+            msg = u"User name: %s has already exist." % name
+            raise ValidationError(msg)
+        else:
+            return self.cleaned_data
 
 
 def index(request):
@@ -38,3 +53,4 @@ def edit(request, user_id):
         u.password = request.POST['password']
         u.save()
     return render(request, 'insert.html')
+
